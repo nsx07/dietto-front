@@ -12,23 +12,23 @@ export interface SignUpRequest {
 export class AuthService {
   private static endpoint = "http://localhost:3333/api/auth";
 
-  static login(data: LoginRequest) {
+  static async login(data: LoginRequest) {
     return fetch(`${AuthService.endpoint}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    });
+    }).then((response) => response.json());
   }
 
-  static signUp(data: SignUpRequest) {
+  static async signUp(data: SignUpRequest) {
     return fetch(`${AuthService.endpoint}/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    });
+    }).then((response) => response.json());
   }
 }
