@@ -223,7 +223,7 @@ export default function LoginForm() {
                     <input type="checkbox" name="remember" className="form-checkbox" checked={formData.remember} onChange={handleRememberChange} />
                     <span className="text-sm text-gray-600">Lembrar</span>
                   </label>
-                  <Button variant={"link"} onClick={goToForgotPassword} className="text-sm text-primary hover:underline cursor-pointer">
+                  <Button variant={"link"} type="button" onClick={goToForgotPassword} className="text-sm text-primary hover:underline cursor-pointer">
                     Esqueceu a senha
                   </Button>
                 </div>
