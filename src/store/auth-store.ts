@@ -1,5 +1,7 @@
 // src/stores/counter-store.ts
+import { decrypt, SessionPayload } from "@/lib/session";
 import { createStore } from "zustand/vanilla";
+import { persist } from "zustand/middleware";
 
 export type AuthState = {
   token: string | null;
@@ -8,6 +10,7 @@ export type AuthState = {
 export type AuthActions = {
   setToken: (token: string) => void;
   removeToken: () => void;
+  getPayload: () => SessionPayload | null | undefined;
 };
 
 export type AuthStore = AuthState & AuthActions;
@@ -21,9 +24,23 @@ export const defaultInitState: AuthState = {
 };
 
 export const createAuthStore = (initState: AuthState = defaultInitState) => {
-  return createStore<AuthStore>()((set) => ({
-    ...initState,
-    setToken: (token) => set({ token }),
-    removeToken: () => set({ token: null }),
-  }));
+  return createStore<AuthStore>()(
+    persist(
+      (set, get) => ({
+        ...initState,
+        setToken: (token) => set({ token }),
+        removeToken: () => set({ token: null }),
+        getPayload: () => {
+          if (!get().token) {
+            return null;
+          }
+
+          return decrypt(get().token!);
+        },
+      }),
+      {
+        name: "auth-storage",
+      }
+    )
+  );
 };

@@ -3,14 +3,16 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useMobile } from "@/hooks/use-mobile";
+import { useAuthStore } from "@/providers/auth-provider";
+import WaveDots from "./wave-dots";
 
 export function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const isMobile = useMobile();
 
   useEffect(() => {
@@ -38,7 +40,7 @@ export function Navbar() {
       <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="flex items-center space-x-2">
           <div className="h-8 w-8 rounded-full bg-primary" />
-          <span className="text-xl font-bold">AppName</span>
+          <span className="text-xl font-bold">dietto</span>
         </Link>
 
         {!isMobile ? (
@@ -51,14 +53,7 @@ export function Navbar() {
               ))}
             </div>
             <div className="flex items-center space-x-4">
-              <Link href="/auth/signin">
-                <Button variant="outline" className="w-full justify-start">
-                  Log in
-                </Button>
-              </Link>
-              <Link href="/auth/signup">
-                <Button className="w-full justify-start">Sign up</Button>
-              </Link>
+              <AuthButtons />
             </div>
           </nav>
         ) : (
@@ -84,19 +79,50 @@ export function Navbar() {
                 </Link>
               ))}
               <div className="flex flex-col space-y-2 pt-4">
-                <Link href="/auth/signin">
-                  <Button variant="outline" className="w-full justify-start">
-                    Log in
-                  </Button>
-                </Link>
-                <Link href="/auth/signup">
-                  <Button className="w-full justify-start">Sign up</Button>
-                </Link>
+                <AuthButtons />
               </div>
             </nav>
           </motion.div>
         )}
       </AnimatePresence>
     </header>
+  );
+}
+
+export function AuthButtons() {
+  const getPayload = useAuthStore((state) => state.getPayload);
+  const [name, setName] = useState<string | 1>(1);
+
+  useEffect(() => {
+    const payload = getPayload();
+    if (payload) {
+      setName(payload.name);
+      // setTimeout(() => {
+      // }, 10000);
+    }
+  }, [getPayload]);
+
+  return (
+    <>
+      {name === 1 ? (
+        <Button variant="outline" size="sm">
+          <WaveDots />
+        </Button>
+      ) : !name ? (
+        <>
+          <Link href="/auth/signin" className={buttonVariants({ variant: "outline", size: "sm" })}>
+            Entrar
+          </Link>
+          <Link href="/auth/signup" className={buttonVariants({ size: "sm" })}>
+            Criar conta
+          </Link>
+        </>
+      ) : (
+        <Link href="/home" className={buttonVariants({ variant: "outline", size: "sm" })}>
+          {name}
+          <ArrowRight className="h-4 w-4 ml-1" />
+        </Link>
+      )}
+    </>
   );
 }

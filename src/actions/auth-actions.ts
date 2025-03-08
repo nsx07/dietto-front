@@ -1,5 +1,6 @@
 "use server";
 
+import { encrypt } from "@/lib/session";
 import { AuthService } from "@/services/auth-service";
 import { cookies } from "next/headers";
 import { z } from "zod";
@@ -44,6 +45,7 @@ type SignInFormState =
       };
       message?: string;
       status?: "success" | "error";
+      data?: string;
     }
   | undefined;
 
@@ -110,7 +112,7 @@ export async function signin(state: SignInFormState, formData: FormData): Promis
       return {
         message: "Bem-vindo! 🎉",
         status: "success" as const,
-        data: response.data.token,
+        data: encrypt(response.data),
       };
     })
     .catch((e) => ({
@@ -124,10 +126,7 @@ export async function signin(state: SignInFormState, formData: FormData): Promis
     });
   }
 
-  return {
-    message: response.message,
-    status: response.status,
-  };
+  return response;
 }
 
 export async function signout() {

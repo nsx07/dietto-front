@@ -12,6 +12,7 @@ import Link from "next/link";
 import { signin } from "@/actions/auth-actions";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/providers/auth-provider";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -79,15 +80,27 @@ export default function LoginForm() {
     }
   };
 
+  const auth = useAuthStore((r) => r);
+
   useEffect(() => {
-    if (state?.status === "success") {
-      router.push("/in");
+    if (state?.status === "success" && state.data) {
+      auth.setToken(state.data);
+      router.push("/home");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, router]);
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4 bg-gray-50">
       <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardDescription>
+            <Link href="/" className="flex items-center space-x-2">
+              <div className="h-8 w-8 rounded-full bg-primary" />
+              <span className="text-xl font-bold">dietto</span>
+            </Link>
+          </CardDescription>
+        </CardHeader>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Entre na sua conta</CardTitle>
           <CardDescription>Digite seu e-mail e senha para entrar</CardDescription>
