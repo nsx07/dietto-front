@@ -8,7 +8,6 @@ import { ArrowRight, Menu, X } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useMobile } from "@/hooks/use-mobile";
 import { useAuthStore } from "@/providers/auth-provider";
-import WaveDots from "./wave-dots";
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -91,24 +90,18 @@ export function Navbar() {
 
 export function AuthButtons() {
   const getPayload = useAuthStore((state) => state.getPayload);
-  const [name, setName] = useState<string | 1>(1);
+  const [name, setName] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const payload = getPayload();
     if (payload) {
       setName(payload.name);
-      // setTimeout(() => {
-      // }, 10000);
     }
   }, [getPayload]);
 
   return (
     <>
-      {name === 1 ? (
-        <Button variant="outline" size="sm">
-          <WaveDots />
-        </Button>
-      ) : !name ? (
+      {!name ? (
         <>
           <Link href="/auth/signin" className={buttonVariants({ variant: "outline", size: "sm" })}>
             Entrar

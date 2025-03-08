@@ -1,53 +1,9 @@
 "use server";
 
-import { encrypt } from "@/lib/session";
+import { decrypt, encrypt } from "@/lib/session";
 import { AuthService } from "@/services/auth-service";
+import { SignUpFormState, SignupFormSchema, SignInFormState, SigninFormSchema } from "@/types/auth-actions";
 import { cookies } from "next/headers";
-import { z } from "zod";
-
-const SignupFormSchema = z.object({
-  name: z.string().min(2, { message: "O nome deve ter pelo menos 2 caracteres." }).trim(),
-  email: z.string().email({ message: "Por favor, insira um e-mail válido." }).trim(),
-  password: z
-    .string()
-    .min(8, { message: "Deve ter pelo menos 8 caracteres." })
-    .regex(/[a-z]/, { message: "Deve conter pelo menos uma letra minúscula." })
-    .regex(/[A-Z]/, { message: "Deve conter pelo menos uma letra maiúscula." })
-    .regex(/[0-9]/, { message: "Deve conter pelo menos um número." })
-    .regex(/[^a-zA-Z0-9]/, {
-      message: "Deve conter pelo menos um caractere especial.",
-    })
-    .trim(),
-});
-
-type SignUpFormState =
-  | {
-      errors?: {
-        name?: string[];
-        email?: string[];
-        password?: string[];
-      };
-      message?: string;
-      status?: "success" | "error";
-    }
-  | undefined;
-
-const SigninFormSchema = z.object({
-  email: z.string().email({ message: "Por favor, insira um e-mail válido." }).trim(),
-  password: z.string().min(8, { message: "Deve ter pelo menos 8 caracteres." }).trim(),
-});
-
-type SignInFormState =
-  | {
-      errors?: {
-        email?: string[];
-        password?: string[];
-      };
-      message?: string;
-      status?: "success" | "error";
-      data?: string;
-    }
-  | undefined;
 
 export async function signup(state: SignUpFormState, formData: FormData): Promise<SignUpFormState> {
   const validatedFields = SignupFormSchema.safeParse({
@@ -112,7 +68,7 @@ export async function signin(state: SignInFormState, formData: FormData): Promis
       return {
         message: "Bem-vindo! 🎉",
         status: "success" as const,
-        data: encrypt(response.data),
+        data: encrypt(response.data.token),
       };
     })
     .catch((e) => ({
@@ -121,8 +77,9 @@ export async function signin(state: SignInFormState, formData: FormData): Promis
     }));
 
   if (response.status === "success") {
+    const payload = decrypt(response.data!);
     (await cookies()).set("session", response.data!, {
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 3),
+      expires: new Date(payload?.exp ?? Date.now() + 1000 * 60 * 60 * 3),
     });
   }
 
@@ -130,7 +87,5 @@ export async function signin(state: SignInFormState, formData: FormData): Promis
 }
 
 export async function signout() {
-  (await cookies()).set("session", "", {
-    expires: new Date(Date.now() - 1000),
-  });
+  (await cookies()).delete("session");
 }

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, CheckCircle2, LoaderPinwheel, Terminal } from "lucide-react";
+import { AlertCircle, CheckCircle2, LoaderPinwheel } from "lucide-react";
 import Link from "next/link";
 import { signup } from "@/actions/auth-actions";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
@@ -103,6 +103,14 @@ export default function SignupForm() {
   return (
     <div className="flex justify-center items-center min-h-screen p-4 bg-gray-50">
       <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardDescription>
+            <Link href="/" className="flex items-center space-x-2">
+              <div className="h-8 w-8 rounded-full bg-primary" />
+              <span className="text-xl font-bold text-slate-900">dietto</span>
+            </Link>
+          </CardDescription>
+        </CardHeader>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Criar uma conta</CardTitle>
           <CardDescription>Digite suas informações para se cadastrar</CardDescription>

@@ -10,7 +10,7 @@ export type AuthState = {
 export type AuthActions = {
   setToken: (token: string) => void;
   removeToken: () => void;
-  getPayload: () => SessionPayload | null | undefined;
+  getPayload: () => Pick<SessionPayload, "name" | "email" | "userId"> | null | undefined;
 };
 
 export type AuthStore = AuthState & AuthActions;
