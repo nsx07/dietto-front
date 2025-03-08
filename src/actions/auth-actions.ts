@@ -120,7 +120,7 @@ export async function signin(state: SignInFormState, formData: FormData): Promis
 
   if (response.status === "success") {
     (await cookies()).set("session", response.data!, {
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 3),
     });
   }
 

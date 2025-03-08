@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 
 export const verifySession = cache(async () => {
   const cookie = (await cookies()).get("session")?.value;
-  const session = await decrypt(cookie);
+  const session = decrypt(cookie);
 
   if (!session?.userId) {
     redirect("/login");

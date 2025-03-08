@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { startTransition, useActionState, useState } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,8 +11,10 @@ import { AlertCircle, LoaderPinwheel } from "lucide-react";
 import Link from "next/link";
 import { signin } from "@/actions/auth-actions";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
+  const router = useRouter();
   const [state, action, pending] = useActionState(signin, undefined);
   const [formData, setFormData] = useState({
     email: "",
@@ -76,6 +78,12 @@ export default function LoginForm() {
       });
     }
   };
+
+  useEffect(() => {
+    if (state?.status === "success") {
+      router.push("/in");
+    }
+  }, [state, router]);
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4 bg-gray-50">
