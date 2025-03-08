@@ -1,6 +1,7 @@
 "use server";
 
 import { AuthService } from "@/services/auth-service";
+import { cookies } from "next/headers";
 import { z } from "zod";
 
 const SignupFormSchema = z.object({
@@ -22,6 +23,22 @@ type SignUpFormState =
   | {
       errors?: {
         name?: string[];
+        email?: string[];
+        password?: string[];
+      };
+      message?: string;
+      status?: "success" | "error";
+    }
+  | undefined;
+
+const SigninFormSchema = z.object({
+  email: z.string().email({ message: "Por favor, insira um e-mail válido." }).trim(),
+  password: z.string().min(8, { message: "Deve ter pelo menos 8 caracteres." }).trim(),
+});
+
+type SignInFormState =
+  | {
+      errors?: {
         email?: string[];
         password?: string[];
       };
@@ -62,22 +79,6 @@ export async function signup(state: SignUpFormState, formData: FormData): Promis
   });
 }
 
-const SigninFormSchema = z.object({
-  email: z.string().email({ message: "Por favor, insira um e-mail válido." }).trim(),
-  password: z.string().min(8, { message: "Deve ter pelo menos 8 caracteres." }).trim(),
-});
-
-type SignInFormState =
-  | {
-      errors?: {
-        email?: string[];
-        password?: string[];
-      };
-      message?: string;
-      status?: "success" | "error";
-    }
-  | undefined;
-
 export async function signin(state: SignInFormState, formData: FormData): Promise<SignInFormState> {
   const validatedFields = SigninFormSchema.safeParse({
     email: formData.get("email"),
@@ -90,25 +91,47 @@ export async function signin(state: SignInFormState, formData: FormData): Promis
     };
   }
 
-  return AuthService.login({
+  const response: {
+    message: string;
+    status: "success" | "error";
+    data?: string;
+  } = await AuthService.login({
     email: formData.get("email") as string,
     password: formData.get("password") as string,
   })
-    .then((response) => {
+    .then(async (response) => {
       if (!response.success) {
         return {
           message: response.message,
-          status: "error",
+          status: "error" as const,
         };
       }
 
       return {
         message: "Bem-vindo! 🎉",
-        status: "success",
+        status: "success" as const,
+        data: response.data.token,
       };
     })
     .catch((e) => ({
       message: "Erro ao fazer login. Tente novamente mais tarde." + e,
       status: "error",
-    })) as any;
+    }));
+
+  if (response.status === "success") {
+    (await cookies()).set("session", response.data!, {
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+    });
+  }
+
+  return {
+    message: response.message,
+    status: response.status,
+  };
+}
+
+export async function signout() {
+  (await cookies()).set("session", "", {
+    expires: new Date(Date.now() - 1000),
+  });
 }

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { decrypt } from "@/lib/session";
 import { cookies } from "next/headers";
 
-const protectedRoutes = ["/dashboard"];
+const protectedRoutes = ["/user"];
 const publicRoutes = ["/signin", "/signup", "/"];
 
 export default async function middleware(req: NextRequest) {
@@ -11,10 +11,10 @@ export default async function middleware(req: NextRequest) {
   const isPublicRoute = publicRoutes.includes(path);
 
   const cookie = (await cookies()).get("session")?.value;
-  const session = await decrypt(cookie);
+  const session = decrypt(cookie);
 
   if (isProtectedRoute && !session?.userId) {
-    return NextResponse.redirect(new URL("/login", req.nextUrl));
+    return NextResponse.redirect(new URL("/auth/signin", req.nextUrl));
   }
 
   if (isPublicRoute && session?.userId && !req.nextUrl.pathname.startsWith("/dashboard")) {
