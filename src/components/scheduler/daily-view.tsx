@@ -6,6 +6,7 @@ import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import type { Appointment } from "@/lib/types";
 import { AppointmentItem } from "./appointment-item";
 import { cn } from "@/lib/utils";
+import { Droppable } from "./dnd-kit/droppable";
 
 interface DailyViewProps {
   date: Date;
@@ -28,7 +29,7 @@ export function DailyView({ date, appointments, onAppointmentClick, onMoveAppoin
     useSensor(MouseSensor, {
       // Prevent accidental drags when clicking
       activationConstraint: {
-        delay: 150,
+        delay: 100,
         tolerance: 5,
       },
     }),
@@ -108,15 +109,15 @@ export function DailyView({ date, appointments, onAppointmentClick, onMoveAppoin
           {hours.map((hour) => (
             <div key={hour} className="h-20 border-b">
               {[0, 15, 30, 45].map((minute) => (
-                <div
-                  key={`${hour}:${minute}`}
-                  id={`${hour}:${minute}`}
-                  className={cn(
-                    "h-5 border-t border-dashed border-muted last:border-b-0",
-                    // Highlight drop targets during drag for better UX
-                    activeId && "hover:bg-muted/30 transition-colors"
-                  )}
-                ></div>
+                <Droppable key={`${hour}:${minute}`} id={`${hour}:${minute}`} date={new Date(date).setHours(hour, minute)}>
+                  <div
+                    className={cn(
+                      "h-5 border-t border-dashed border-muted last:border-b-0",
+                      // Highlight drop targets during drag for better UX
+                      activeId && "hover:bg-muted/30 transition-colors"
+                    )}
+                  ></div>
+                </Droppable>
               ))}
             </div>
           ))}

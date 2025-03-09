@@ -9,6 +9,7 @@ import { ptBR } from "date-fns/locale/pt-BR";
 import { cn } from "@/lib/utils";
 import type { Appointment } from "@/lib/types";
 import { AppointmentItem } from "./appointment-item";
+import { Droppable } from "./dnd-kit/droppable";
 
 interface WeeklyViewProps {
   date: Date;
@@ -41,7 +42,7 @@ export function WeeklyView({ date, appointments, onAppointmentClick, onMoveAppoi
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: {
-        delay: 150,
+        delay: 100,
         tolerance: 5,
       },
     }),
@@ -61,12 +62,15 @@ export function WeeklyView({ date, appointments, onAppointmentClick, onMoveAppoi
   // Track drag start to update UI accordingly
   const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id.toString());
+    console.log("Drag start:", event.active.id);
   }, []);
 
   // Handle drag end with improved position calculation
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
+      console.log("Drag end:", event);
+
       setActiveId(null);
 
       if (!over) return;
@@ -231,22 +235,21 @@ export function WeeklyView({ date, appointments, onAppointmentClick, onMoveAppoi
         </div>
         <div className="grid grid-cols-7" ref={containerRef}>
           {days.map((day, dayIndex) => (
-            <div key={dayIndex} className="border-r last:border-r-0">
+            <div key={day.toDateString()} className="border-r last:border-r-0">
               <div className="h-12 border-b flex flex-col items-center justify-center">
-                <span className="text-xs sm:text-sm font-medium capitalize">{format(day, "EEE", { locale: ptBR })}</span>
-                <span className={cn("text-xs sm:text-sm mt-1 h-6 w-6 flex items-center justify-center rounded-full", isSameDay(day, new Date()) && "bg-primary text-primary-foreground")}>
+                <span className="text-xs sm:text-sm font-medium capitalize md:hidden block">{format(day, "cccccc", { locale: ptBR })}</span>
+                <span className="text-xs sm:text-sm font-medium capitalize md:block hidden">{format(day, "EEE", { locale: ptBR })}</span>
+                <span className={cn("text-xs sm:text-sm h-6 w-6 flex items-center justify-center rounded-full", isSameDay(day, new Date()) && "bg-primary text-primary-foreground")}>
                   {format(day, "d", { locale: ptBR })}
                 </span>
               </div>
               <div className="relative">
                 {hours.map((hour) => (
-                  <div key={hour} className="h-20 border-b">
+                  <div key={day.toDateString() + hour} className="h-20 border-b">
                     {[0, 15, 30, 45].map((minute) => (
-                      <div
-                        key={`${dayIndex}-${hour}-${minute}`}
-                        id={`${dayIndex}-${hour}-${minute}`}
-                        className={cn("h-5 border-t border-dashed border-muted last:border-b-0", activeId && "hover:bg-muted/30 transition-colors")}
-                      ></div>
+                      <Droppable key={`${dayIndex}-${hour}-${minute}`} id={`${dayIndex}-${hour}-${minute}`} date={new Date(day).setHours(hour, minute)}>
+                        <div className={cn("h-5 border-t border-dashed border-muted last:border-b-0", activeId && "hover:bg-muted/30 transition-colors")}></div>
+                      </Droppable>
                     ))}
                   </div>
                 ))}
@@ -296,7 +299,7 @@ export function WeeklyView({ date, appointments, onAppointmentClick, onMoveAppoi
               <div
                 className="opacity-80 pointer-events-none"
                 style={{
-                  width: "calc(100% / 7 - 4px)",
+                  width: "calc(100%)",
                 }}
               >
                 <AppointmentItem appointment={activeAppointment} onClick={() => {}} isDragOverlay />

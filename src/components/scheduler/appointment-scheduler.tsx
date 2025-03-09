@@ -106,7 +106,7 @@ export function AppointmentScheduler() {
   }, [currentDate, view]);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-120px)] border rounded-lg shadow-sm">
+    <div className="flex flex-col h-[calc(100vh-120px)]">
       <div className="flex flex-col sm:flex-row justify-between items-center p-4 border-b">
         <div className="flex items-center mb-4 sm:mb-0">
           <Button variant="outline" size="icon" onClick={handlePrevious}>
