@@ -2,7 +2,10 @@
 
 import { BarChart3, Calendar, CreditCard, FileText, Home, Inbox, LayoutDashboard, Settings, Users } from "lucide-react";
 
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from "@/components/ui/sidebar";
+import { SidebarToggle } from "./sidebar-toggle";
+import { useSidebarState } from "@/hooks/use-sidebar-state";
+import Link from "next/link";
 
 // Navigation items for the sidebar
 const navigationItems = [
@@ -31,7 +34,7 @@ const navigationItems = [
   {
     title: "Calendario",
     icon: Calendar,
-    href: "/calendar",
+    href: "/agenda",
   },
   {
     title: "Documentos",
@@ -60,20 +63,23 @@ const secondaryItems = [
 ];
 
 export function AppSidebar() {
+  const { isInitialized } = useSidebarState();
+
   return (
-    <Sidebar className="mt-16">
+    <Sidebar className="mt-16" collapsible="icon">
+      <SidebarHeader className="flex justify-end p-2">{isInitialized && <SidebarToggle />}</SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navegação</SidebarGroupLabel>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={item.isActive} tooltip={item.title}>
-                    <a href={item.href}>
+                    <Link href={item.href}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -82,7 +88,7 @@ export function AppSidebar() {
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel>Gestão</SidebarGroupLabel>
+          <SidebarGroupLabel>Management</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {secondaryItems.map((item) => (

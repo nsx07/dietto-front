@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, HelpCircle } from "lucide-react";
+import { Bell, HelpCircle, Menu } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useSidebar } from "@/components/ui/sidebar";
 import { signout } from "@/actions/auth-actions";
 import { useAuthStore } from "@/providers/auth-provider";
 import { useRouter } from "next/navigation";
@@ -21,6 +21,7 @@ const getInitials = (name?: string) => {
 
 export function AppNavbar() {
   const { removeToken, getPayload } = useAuthStore((a) => a);
+  const { isMobile, setOpenMobile } = useSidebar();
   const router = useRouter();
   const user = {
     ...getPayload(),
@@ -35,7 +36,12 @@ export function AppNavbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
-      <SidebarTrigger className="md:hidden" />
+      {isMobile && (
+        <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setOpenMobile(true)}>
+          <Menu className="h-5 w-5" />
+          <span className="sr-only">Open menu</span>
+        </Button>
+      )}
       <Link href="/" className="flex items-center gap-2 md:mr-4">
         <div className="h-6 w-6 rounded-md bg-primary text-primary-foreground flex items-center justify-center font-bold">D</div>
         <span className="hidden font-bold md:inline-block">Dashboard</span>
