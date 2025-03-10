@@ -24,7 +24,7 @@ export interface IpInfo {
 }
 
 export class AuthService {
-  private static endpoint = "http://localhost:3333/api/auth";
+  private static endpoint = process.env.NEXT_PUBLIC_API_URL + "/api/auth";
 
   private static async getIp() {
     return await fetch("https://ipinfo.io/json").then((response) => response.json() as Promise<IpInfo>);
