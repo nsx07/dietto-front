@@ -53,7 +53,7 @@ const secondaryItems = [
   {
     title: "Assinatura",
     icon: CreditCard,
-    href: "/billing",
+    href: "/subscription",
   },
   {
     title: "Configurações",
