@@ -1,11 +1,14 @@
 "use client"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { BillingTab }  from "./tabs/billing"
-import { HistoryTab } from "./tabs/history"
-import { OverviewTab } from "./tabs/overview"
-import { PlansTab } from "./tabs/plans"
-
+// import { BillingTab }  from "./tabs/billing"
+// import { HistoryTab } from "./tabs/history"
+// import { OverviewTab } from "./tabs/overview"
+// import { PlansTab } from "./tabs/plans"
+import { BillingTab as Billing } from "@/app/(in)/subscription/tabs/billing"
+import { HistoryTab as History } from "@/app/(in)/subscription/tabs/history"
+import { OverviewTab as Overview } from "@/app/(in)/subscription/tabs/overview"
+import { PlansTab as Plans } from "@/app/(in)/subscription/tabs/plans"
 
 
 export function SubscriptionDashboard() {
@@ -46,3 +49,4 @@ export function SubscriptionDashboard() {
   )
 }
 
+export default SubscriptionDashboard
