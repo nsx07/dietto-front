@@ -34,7 +34,7 @@ const navigationItems = [
   {
     title: "Calendario",
     icon: Calendar,
-    href: "/agenda",
+    href: "/scheduler",
   },
   {
     title: "Documentos",
