@@ -11,6 +11,7 @@ import { AlertCircle, CheckCircle2, LoaderPinwheel } from "lucide-react";
 import Link from "next/link";
 import { signup } from "@/actions/auth-actions";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { useRouter } from "next/navigation";
 
 export default function SignupForm() {
   const [state, action, pending] = useActionState(signup, undefined);
@@ -19,6 +20,7 @@ export default function SignupForm() {
     email: "",
     password: "",
   });
+  const router = useRouter();
 
   const [errors, setErrors] = useState({
     name: "",
@@ -96,6 +98,7 @@ export default function SignupForm() {
 
       startTransition(() => {
         action(fData);
+        router.replace("/auth/signin");
       });
     }
   };
