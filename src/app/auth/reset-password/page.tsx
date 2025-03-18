@@ -2,20 +2,29 @@
 
 import { CardFooter } from "@/components/ui/card";
 import type React from "react";
-import { startTransition, useActionState, useState } from "react";
+import { startTransition, Suspense, useActionState, useState } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, CheckCircle2, LoaderPinwheel } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { resetPassword } from "@/actions/auth-actions";
 import Link from "next/link";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { resetPassword } from "@/actions/auth-actions";
 
-export default function PasswordResetForm() {
-  const searchParams = useSearchParams();
+// Read more: https://nextjs.org/docs/messages/missing-suspense-with-csr-bailout
+export default function Any() {
+  return (
+    <Suspense fallback={<LoaderPinwheel className="h-8 w-8 animate-spin" />}>
+      <PasswordResetForm />
+    </Suspense>
+  );
+}
+
+function PasswordResetForm() {
   const [state, action, pending] = useActionState(resetPassword, undefined);
+  const searchParams = useSearchParams();
   const token = searchParams.get("token") || undefined;
   const [formData, setFormData] = useState({
     password: "",

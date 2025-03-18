@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { startTransition, useActionState, useState } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -98,10 +98,15 @@ export default function SignupForm() {
 
       startTransition(() => {
         action(fData);
-        router.replace("/auth/signin");
       });
     }
   };
+
+  useEffect(() => {
+    if (state?.status === "success") {
+      router.push("/auth/signin");
+    }
+  }, [state, router]);
 
   return (
     <div className="flex justify-center items-center min-h-screen p-4 bg-gray-50">

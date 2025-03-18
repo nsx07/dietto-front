@@ -22,19 +22,24 @@ export async function signup(state: SignUpFormState, formData: FormData): Promis
     name: formData.get("name") as string,
     email: formData.get("email") as string,
     password: formData.get("password") as string,
-  }).then((response) => {
-    if (!response.success) {
-      return {
-        message: response.message,
-        status: "error",
-      };
-    }
+  })
+    .then((response) => {
+      if (!response.success) {
+        return {
+          message: response.message,
+          status: "error" as const,
+        };
+      }
 
-    return {
-      message: "Conta criada com sucesso! 💥",
-      status: "success",
-    };
-  });
+      return {
+        message: "Conta criada com sucesso! 💥",
+        status: "success" as const,
+      };
+    })
+    .catch((e) => ({
+      message: "Erro ao criar conta." + e ? ` ${e}` : "",
+      status: "error",
+    }));
 }
 
 export async function signin(state: SignInFormState, formData: FormData): Promise<SignInFormState> {
@@ -72,7 +77,7 @@ export async function signin(state: SignInFormState, formData: FormData): Promis
       };
     })
     .catch((e) => ({
-      message: "Erro ao fazer login. Tente novamente mais tarde." + e,
+      message: "Erro ao fazer login." + e ? ` ${e}` : "",
       status: "error",
     }));
 
@@ -116,7 +121,7 @@ export async function sendResetPassword(formData: FormData): Promise<SendResetPa
       };
     })
     .catch((e) => ({
-      message: "Erro ao enviar email. Tente novamente mais tarde." + e,
+      message: "Erro ao enviar email." + e ? ` ${e}` : "",
       status: "error",
     }));
 }
@@ -149,7 +154,7 @@ export async function resetPassword(state: ResetPasswordState, formData: FormDat
       };
     })
     .catch((e) => ({
-      message: "Erro ao alterar senha. Tente novamente mais tarde." + e,
+      message: "Erro ao alterar senha." + e ? ` ${e}` : "",
       status: "error",
     }));
 }
