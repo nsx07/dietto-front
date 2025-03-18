@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, ArrowLeft, LoaderPinwheel, Mailbox } from "lucide-react";
 import Link from "next/link";
-import { signin } from "@/actions/auth-actions";
+import { sendResetPassword, signin } from "@/actions/auth-actions";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/providers/auth-provider";
@@ -107,6 +107,11 @@ export default function LoginForm() {
     });
 
     if (!resetEmailError) {
+      startTransition(() => {
+        const sendResetPasswordData = new FormData();
+        sendResetPasswordData.append("email", formData.resetEmail);
+        sendResetPassword(sendResetPasswordData).then(console.log).catch(console.log);
+      });
       console.log("Password reset requested for:", formData.resetEmail);
       setView("resetSent");
       handleCountDown();

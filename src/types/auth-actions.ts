@@ -43,3 +43,36 @@ export type SignInFormState =
       data?: string;
     }
   | undefined;
+
+export const SendResetPasswordSchema = z.object({
+  email: z.string().email({ message: "Por favor, insira um e-mail válido." }).trim(),
+});
+
+export type SendResetPasswordState =
+  | {
+      errors?: {
+        email?: string[];
+      };
+      message?: string;
+      status?: "success" | "error";
+      data?: string;
+    }
+  | undefined;
+
+export const ResetPasswordSchema = z.object({
+  token: z.string().min(1),
+  password: z.string().min(8),
+  newPassword: z.string().min(8),
+});
+
+export type ResetPasswordState =
+  | {
+      errors?: {
+        token?: string[];
+        password?: string[];
+        newPassword?: string[];
+      };
+      message?: string;
+      status?: "success" | "error";
+    }
+  | undefined;

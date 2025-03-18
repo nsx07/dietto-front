@@ -1,4 +1,5 @@
 import { reverse } from "@/lib/session";
+import { headers } from "next/headers";
 
 export interface LoginRequest {
   email: string;
@@ -48,6 +49,32 @@ export class AuthService {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
+    }).then((response) => response.json());
+  }
+
+  static async sendResetPassword(email: string) {
+    const _headers = await headers();
+    const origin = _headers.get("origin");
+
+    const hders = {
+      "Content-Type": "application/json",
+      origin: origin,
+    };
+
+    return fetch(`${AuthService.endpoint}/send-reset-password`, {
+      method: "POST",
+      headers: hders as HeadersInit,
+      body: JSON.stringify({ email }),
+    }).then((response) => response.json());
+  }
+
+  static async resetPassword(token: string, password: string, newPassword: string) {
+    return fetch(`${AuthService.endpoint}/reset-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token, password, newPassword }),
     }).then((response) => response.json());
   }
 }

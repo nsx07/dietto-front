@@ -2,7 +2,7 @@
 
 import { decrypt, encrypt } from "@/lib/session";
 import { AuthService } from "@/services/auth-service";
-import { SignUpFormState, SignupFormSchema, SignInFormState, SigninFormSchema } from "@/types/auth-actions";
+import { SignUpFormState, SignupFormSchema, SignInFormState, SigninFormSchema, SendResetPasswordSchema, ResetPasswordSchema, SendResetPasswordState, ResetPasswordState } from "@/types/auth-actions";
 import { cookies } from "next/headers";
 
 export async function signup(state: SignUpFormState, formData: FormData): Promise<SignUpFormState> {
@@ -88,4 +88,68 @@ export async function signin(state: SignInFormState, formData: FormData): Promis
 
 export async function signout() {
   (await cookies()).delete("session");
+}
+
+export async function sendResetPassword(formData: FormData): Promise<SendResetPasswordState> {
+  const validatedFields = SendResetPasswordSchema.safeParse({
+    email: formData.get("email"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  return AuthService.sendResetPassword(formData.get("email") as string)
+    .then((response) => {
+      if (!response.success) {
+        return {
+          message: response.message,
+          status: "error" as const,
+        };
+      }
+
+      return {
+        message: "Email enviado com sucesso! 🚀",
+        success: "success" as const,
+      };
+    })
+    .catch((e) => ({
+      message: "Erro ao enviar email. Tente novamente mais tarde." + e,
+      status: "error",
+    }));
+}
+
+export async function resetPassword(state: ResetPasswordState, formData: FormData): Promise<ResetPasswordState> {
+  const validatedFields = ResetPasswordSchema.safeParse({
+    token: formData.get("token"),
+    password: formData.get("password"),
+    newPassword: formData.get("newPassword"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  return AuthService.resetPassword(validatedFields.data.token, validatedFields.data.password, validatedFields.data.newPassword)
+    .then((response) => {
+      if (!response.success) {
+        return {
+          message: response.message,
+          status: "error" as const,
+        };
+      }
+
+      return {
+        message: "Senha alterada com sucesso! 🎉",
+        status: "success" as const,
+      };
+    })
+    .catch((e) => ({
+      message: "Erro ao alterar senha. Tente novamente mais tarde." + e,
+      status: "error",
+    }));
 }
