@@ -1,3 +1,4 @@
+import { Role } from "@/types/enums/Role";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 
 export const reverse = (str: string) => str.split("").reverse().join("");
@@ -12,4 +13,5 @@ export type SessionPayload = JwtPayload & {
   userId: string;
   email: string;
   name: string;
+  role: Role;
 };
