@@ -230,9 +230,9 @@ export default function NutritionApp() {
                 if (plan) loadPlan(plan)
               }}
             >
-              <SelectTrigger className="w-[180px]">
+              {/* <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Carregar Plano" />
-              </SelectTrigger>
+              </SelectTrigger> */}
               <SelectContent>
                 {savedPlans.map((plan) => (
                   <SelectItem key={plan.id} value={plan.id}>
@@ -253,14 +253,11 @@ export default function NutritionApp() {
               <div className="flex justify-between items-center">
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
-                  Paciente
+                  Elvis Claudino
                 </CardTitle>
-                <Button variant="ghost" size="sm" onClick={() => setIsEditingPatient(!isEditingPatient)}>
-                  {isEditingPatient ? "Concluir" : "Editar"}
-                </Button>
+                
               </div>
-            </CardHeader>
-            car
+            </CardHeader> 
             <CardFooter className="pt-0">
               <Card className="w-full">
                 <CardHeader className="py-2">
